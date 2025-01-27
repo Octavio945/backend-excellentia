@@ -1,16 +1,17 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/db');
 
-const Filiere = sequelize.define('Filiere', {
-  name: {
+const News = sequelize.define('News', {
+  title: {
     type: DataTypes.STRING,
     allowNull: false
   },
-  description: {
-    type: DataTypes.TEXT
+  content: {
+    type: DataTypes.TEXT,
+    allowNull: false
   }
 }, {
   timestamps: true
 });
 
-module.exports = Filiere;
+module.exports = News;

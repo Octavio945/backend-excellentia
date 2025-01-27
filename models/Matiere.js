@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/db');
 
-const Filiere = sequelize.define('Filiere', {
+const Matiere = sequelize.define('Matiere', {
   name: {
     type: DataTypes.STRING,
     allowNull: false
@@ -13,4 +13,4 @@ const Filiere = sequelize.define('Filiere', {
   timestamps: true
 });
 
-module.exports = Filiere;
+module.exports = Matiere;

@@ -1,50 +1,30 @@
-const bcryt = require('bcrypt')
-const jwt = require('jsonwebtoken')
-const Utilisateur = require('../models/Utilisateur')
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const { User } = require('../models');
 
-// INSCRIPTION
-exports.register = (req, res ) => {
-    const {nom, email, mot_de_passe, type_utilisateur} = req.body 
+exports.login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const user = await User.findOne({ where: { email } });
+    if (!user || !bcrypt.compareSync(password, user.password)) {
+      return res.status(401).json({ message: 'Invalid credentials' });
+    }
+    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    res.json({ token });
+  } catch (error) {
+    console.error('Error during login:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
 
-    // Hacher le mot de passe 
-    bcryt.hash(mot_de_passe, 10)
-        .then(hashedPassword => {
-            // Cree un noveau utilisateur 
-            return Utilisateur.create({nom, email, mot_de_passe: hashedPassword, type_utilisateur})
-        })
-        .then(utilisateur => {
-            // Repondre avec l'utilisateur crées 
-            res.status(201).json(utilisateur)
-        })
-        .catch(error => {
-            // gere les erreurs 
-            res.status(400).json ({error: error.message})
-        })
-}
-
-// CONNEXION
-exports.login = (req, res) => {
-    const {email, mot_de_passe} = req.body
-
-    // trouver l'utilisateur pas mail 
-    Utilisateur.findOne({where: {email}})
-    .then(utilisateur => {
-        if (!utilisateur) {
-            return res.status(400).json({error: 'Utilisateur non trouvé'})
-        }
-        //Veruifier si le mot de passe est correct
-        return bcryt.compare(mot_de_passe, utilisateur.mot_de_passe)
-        .then(isMatch => {
-            if (!isMatch) {
-                return res.status(400).json({error: 'Mot de passe Incorrect '})
-            }
-            // generer le token JWT 
-            const token = jwt.sign({id: utilisateur.id}, 'secret_key', {expiresIn: '1h'})
-            res.status(200).json({token})
-        })
-    })
-    .catch(error => {
-        // Gerer les erreurs 
-        res.status(400).json({error: error.message})
-    })
-}
+exports.register = async (req, res) => {
+  try {
+    const { username, email, password, role } = req.body;
+    const hashedPassword = bcrypt.hashSync(password, 10);
+    const user = await User.create({ username, email, password: hashedPassword, role });
+    res.json(user);
+  } catch (error) {
+    console.error('Error during registration:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
