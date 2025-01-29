@@ -5,7 +5,10 @@ const bcrypt = require('bcrypt');
 exports.getAllUsers = async (req, res) => {
   try {
     const users = await User.findAll();
-    res.status(200).json(users);
+    
+      res.status(200).json(users);
+    
+  
   } catch (error) {
     console.error('Error fetching users:', error);
     res.status(500).json({ error: error.message });
@@ -47,7 +50,7 @@ exports.createUser = async (req, res) => {
 exports.updateUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const { username, password, email, role } = req.body;
+    const { username,password, email, role } = req.body;
     const user = await User.findByPk(id);
     if (!user) {
       return res.status(404).json({ message: 'Utilisateur non trouvé' });
