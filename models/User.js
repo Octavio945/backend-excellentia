@@ -20,26 +20,26 @@ const User = sequelize.define('User', {
     allowNull: false,
     unique: true,
     validate: {
-      isEmail: true, // Vérifie que l'email est valide
+      isEmail: true,
     },
   },
   role: {
     type: DataTypes.ENUM('student', 'teacher', 'admin'),
     allowNull: false,
-    defaultValue: 'student', // Définir un rôle par défaut
+    defaultValue: 'student',
   },
   profile_picture: {
-    type: DataTypes.STRING,  // Stocke l'URL ou le chemin de la photo de profil
-    allowNull: true,         // Ce champ est facultatif
+    type: DataTypes.STRING,
+    allowNull: true,
   },
   status: {
     type: DataTypes.ENUM('active', 'inactive'),
     allowNull: false,
-    defaultValue: 'active', // Par défaut, le compte est actif
+    defaultValue: 'active',
   },
 }, {
-  timestamps: true, // Active automatiquement createdAt et updatedAt
-  createdAt: 'created_at', 
+  timestamps: true,
+  createdAt: 'created_at',
   updatedAt: 'updated_at',
 });
 

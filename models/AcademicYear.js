@@ -1,4 +1,4 @@
-const { DataTypes } = require('sequelize');
+const { DataTypes, Op } = require('sequelize');
 const sequelize = require('../config/db');
 
 const AcademicYear = sequelize.define('AcademicYear', {
@@ -16,15 +16,14 @@ const AcademicYear = sequelize.define('AcademicYear', {
   },
 }, {
   timestamps: true,
-  // Ajout d'une contrainte pour éviter les chevauchements d'années académiques
   hooks: {
     beforeCreate: async (academicYear, options) => {
       const overlappingAcademicYear = await AcademicYear.findOne({
         where: {
-          [DataTypes.Op.or]: [
+          [Op.or]: [
             {
-              start_date: { [DataTypes.Op.lt]: academicYear.end_date }, // Si la nouvelle année commence avant la fin de l'année existante
-              end_date: { [DataTypes.Op.gt]: academicYear.start_date },   // Si la nouvelle année se termine après le début de l'année existante
+              start_date: { [Op.lt]: academicYear.end_date },
+              end_date: { [Op.gt]: academicYear.start_date },
             },
           ],
         },
@@ -37,13 +36,13 @@ const AcademicYear = sequelize.define('AcademicYear', {
     beforeUpdate: async (academicYear, options) => {
       const overlappingAcademicYear = await AcademicYear.findOne({
         where: {
-          [DataTypes.Op.or]: [
+          [Op.or]: [
             {
-              start_date: { [DataTypes.Op.lt]: academicYear.end_date },
-              end_date: { [DataTypes.Op.gt]: academicYear.start_date },
+              start_date: { [Op.lt]: academicYear.end_date },
+              end_date: { [Op.gt]: academicYear.start_date },
             },
           ],
-          id: { [DataTypes.Op.ne]: academicYear.id }, // Exclure l'année académique en cours de mise à jour
+          id: { [Op.ne]: academicYear.id },
         },
       });
 

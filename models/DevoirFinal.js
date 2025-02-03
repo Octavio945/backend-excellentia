@@ -15,6 +15,6 @@ const DevoirFinal = sequelize.define('DevoirFinal', {
   timestamps: true
 });
 
-DevoirFinal.belongsTo(Assignment, { foreignKey: 'assignment_id' });
+DevoirFinal.belongsTo(Assignment, { foreignKey: 'assignment_id', onDelete: 'CASCADE' });
 
 module.exports = DevoirFinal;

@@ -15,6 +15,6 @@ const Interrogation = sequelize.define('Interrogation', {
   timestamps: true
 });
 
-Interrogation.belongsTo(Assignment, { foreignKey: 'assignment_id' });
+Interrogation.belongsTo(Assignment, { foreignKey: 'assignment_id', onDelete: 'CASCADE' });
 
 module.exports = Interrogation;

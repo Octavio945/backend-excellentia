@@ -17,12 +17,12 @@ const Payment = sequelize.define('Payment', {
   },
   payment_method: {
     type: DataTypes.ENUM('cash', 'mobile_money', 'bank_transfer', 'other'),
-    allowNull: false, // Indiquer que le mode de paiement est obligatoire
+    allowNull: false,
   },
   reference_code: {
     type: DataTypes.STRING,
-    allowNull: true, // Ce champ peut être nul pour les paiements en espèces, mais pas pour les paiements en ligne
-    unique: true, // Pour garantir l'unicité de chaque référence de paiement
+    allowNull: true,
+    unique: true,
   },
 }, {
   timestamps: true,

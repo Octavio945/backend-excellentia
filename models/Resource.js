@@ -16,7 +16,7 @@ const Resource = sequelize.define('Resource', {
   timestamps: true
 });
 
-Resource.belongsTo(Course, { foreignKey: 'course_id' });
-Resource.belongsTo(User, { foreignKey: 'uploaded_by' });
+Resource.belongsTo(Course, { foreignKey: 'course_id', onDelete: 'CASCADE' });
+Resource.belongsTo(User, { foreignKey: 'uploaded_by', onDelete: 'CASCADE' });
 
 module.exports = Resource;

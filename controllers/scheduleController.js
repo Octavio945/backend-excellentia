@@ -29,15 +29,15 @@ exports.getScheduleById = async (req, res) => {
 // Créer un horaire
 exports.createSchedule = async (req, res) => {
   try {
-    const { course_id, week_number, day_of_week, start_time, end_time } = req.body;
-    if (!course_id || !week_number || !day_of_week || !start_time || !end_time) {
+    const { course_id, week_number, day_of_week, start_time, end_time, classroom, professor_id } = req.body;
+    if (!course_id || !week_number || !day_of_week || !start_time || !end_time || !classroom || !professor_id) {
       return res.status(400).json({ message: 'Tous les champs sont requis' });
     }
-    const newSchedule = await Schedule.create({ course_id, week_number, day_of_week, start_time, end_time });
+    const newSchedule = await Schedule.create({ course_id, week_number, day_of_week, start_time, end_time, classroom, professor_id });
     res.status(201).json(newSchedule);
   } catch (error) {
-    console.error('Error creating schedule:', error);
-    res.status(500).json({ error: error.message });
+    console.error('Erreur lors de la création de l\'emploi du temps', error);
+    res.status(500).json({ error: 'Erreur interne du serveur lors de la création de l\'emploi du temps.' });
   }
 };
 
@@ -45,12 +45,12 @@ exports.createSchedule = async (req, res) => {
 exports.updateSchedule = async (req, res) => {
   try {
     const { id } = req.params;
-    const { week_number, day_of_week, start_time, end_time } = req.body;
+    const { week_number, day_of_week, start_time, end_time, classroom, professor_id } = req.body;
     const schedule = await Schedule.findByPk(id);
     if (!schedule) {
       return res.status(404).json({ message: 'Horaire non trouvé' });
     }
-    await schedule.update({ week_number, day_of_week, start_time, end_time });
+    await schedule.update({ week_number, day_of_week, start_time, end_time, classroom, professor_id });
     res.status(200).json(schedule);
   } catch (error) {
     console.error('Error updating schedule:', error);

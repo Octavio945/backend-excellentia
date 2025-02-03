@@ -6,18 +6,16 @@ const authController = require('../controllers/authController');
 const userController = require('../controllers/userController');
 const academicYearController = require('../controllers/academicYearController');
 const filiereController = require('../controllers/filiereController');
-const matiereController = require('../controllers/matiereController');
 const courseController = require('../controllers/courseController');
 const resourceController = require('../controllers/resourceController');
 const assignmentController = require('../controllers/assignmentController');
 const gradeController = require('../controllers/gradeController');
 const paymentController = require('../controllers/paymentController');
 const scheduleController = require('../controllers/scheduleController');
-const eventController = require('../controllers/eventController');
 const newsController = require('../controllers/newsController');
 const questionController = require('../controllers/questionController');
-const eventParticipantController = require('../controllers/eventParticipantController');
-const professeurMatiereController = require('../controllers/professeurMatiereController');
+const professeurCourseController = require('../controllers/professeurCourseController');
+const filiereCourseController = require('../controllers/filiereCourseController');
 
 // Routes pour l'authentification
 router.post('/login', authController.login);
@@ -43,13 +41,6 @@ router.get('/filieres/:id', filiereController.getFiliereById);
 router.post('/filieres', filiereController.createFiliere);
 router.put('/filieres/:id', filiereController.updateFiliere);
 router.delete('/filieres/:id', filiereController.deleteFiliere);
-
-// Routes pour les matières
-router.get('/matieres', matiereController.getAllMatieres);
-router.get('/matieres/:id', matiereController.getMatiereById);
-router.post('/matieres', matiereController.createMatiere);
-router.put('/matieres/:id', matiereController.updateMatiere);
-router.delete('/matieres/:id', matiereController.deleteMatiere);
 
 // Routes pour les cours
 router.get('/courses', courseController.getAllCourses);
@@ -95,13 +86,6 @@ router.post('/schedules', scheduleController.createSchedule);
 router.put('/schedules/:id', scheduleController.updateSchedule);
 router.delete('/schedules/:id', scheduleController.deleteSchedule);
 
-// Routes pour les événements
-router.get('/events', eventController.getAllEvents);
-router.get('/events/:id', eventController.getEventById);
-router.post('/events', eventController.createEvent);
-router.put('/events/:id', eventController.updateEvent);
-router.delete('/events/:id', eventController.deleteEvent);
-
 // Routes pour les actualités
 router.get('/news', newsController.getAllNews);
 router.get('/news/:id', newsController.getNewsById);
@@ -116,16 +100,17 @@ router.post('/questions', questionController.createQuestion);
 router.put('/questions/:id', questionController.updateQuestion);
 router.delete('/questions/:id', questionController.deleteQuestion);
 
-// Routes pour les participations aux événements
-router.get('/eventParticipants', eventParticipantController.getAllEventParticipants);
-router.get('/eventParticipants/:id', eventParticipantController.getEventParticipantById);
-router.post('/eventParticipants', eventParticipantController.createEventParticipant);
-router.delete('/eventParticipants/:id', eventParticipantController.deleteEventParticipant);
+// Routes pour les associations professeur-cours
+router.get('/professeurCourses', professeurCourseController.getAllProfesseurCourses);
+router.get('/professeurCourses/:id', professeurCourseController.getProfesseurCourseById);
+router.post('/professeurCourses', professeurCourseController.createProfesseurCourse);
+router.delete('/professeurCourses/:id', professeurCourseController.deleteProfesseurCourse);
 
-// Routes pour les associations professeur-matière
-router.get('/professeurMatieres', professeurMatiereController.getAllProfesseurMatieres);
-router.get('/professeurMatieres/:id', professeurMatiereController.getProfesseurMatiereById);
-router.post('/professeurMatieres', professeurMatiereController.createProfesseurMatiere);
-router.delete('/professeurMatieres/:id', professeurMatiereController.deleteProfesseurMatiere);
+// Routes pour les associations filière-cours
+router.get('/filiereCourses', filiereCourseController.getAllFiliereCourses);
+router.get('/filiereCourses/:id', filiereCourseController.getFiliereCourseById);
+router.post('/filiereCourses', filiereCourseController.createFiliereCourse);
+router.put('/filiereCourses/:id', filiereCourseController.updateFiliereCourse);
+router.delete('/filiereCourses/:id', filiereCourseController.deleteFiliereCourse);
 
 module.exports = router;

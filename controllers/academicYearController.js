@@ -6,7 +6,7 @@ exports.getAllAcademicYears = async (req, res) => {
     const academicYears = await AcademicYear.findAll();
     res.status(200).json(academicYears);
   } catch (error) {
-    console.error('Error fetching academic years:', error);
+    console.error('Erreur lors de la récupération des années académiques:', error);
     res.status(500).json({ error: error.message });
   }
 };
@@ -21,7 +21,7 @@ exports.getAcademicYearById = async (req, res) => {
     }
     res.status(200).json(academicYear);
   } catch (error) {
-    console.error('Error fetching academic year:', error);
+    console.error('Erreur lors de la récupération de l\'année académique:', error);
     res.status(500).json({ error: error.message });
   }
 };
@@ -33,10 +33,14 @@ exports.createAcademicYear = async (req, res) => {
     if (!start_date || !end_date || !name) {
       return res.status(400).json({ message: 'Tous les champs sont requis' });
     }
-    const newAcademicYear = await AcademicYear.create({ start_date, end_date, name });
+    const newAcademicYear = await AcademicYear.create({
+      start_date,
+      end_date,
+      name
+    });
     res.status(201).json(newAcademicYear);
   } catch (error) {
-    console.error('Error creating academic year:', error);
+    console.error('Erreur lors de la création de l\'année académique:', error);
     res.status(500).json({ error: error.message });
   }
 };
@@ -53,7 +57,7 @@ exports.updateAcademicYear = async (req, res) => {
     await academicYear.update({ start_date, end_date, name });
     res.status(200).json(academicYear);
   } catch (error) {
-    console.error('Error updating academic year:', error);
+    console.error('Erreur lors de la mise à jour de l\'année académique:', error);
     res.status(500).json({ error: error.message });
   }
 };
@@ -69,7 +73,7 @@ exports.deleteAcademicYear = async (req, res) => {
     await academicYear.destroy();
     res.status(200).json({ message: 'Année académique supprimée avec succès' });
   } catch (error) {
-    console.error('Error deleting academic year:', error);
+    console.error('Erreur lors de la suppression de l\'année académique:', error);
     res.status(500).json({ error: error.message });
   }
 };

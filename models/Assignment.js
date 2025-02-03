@@ -18,6 +18,6 @@ const Assignment = sequelize.define('Assignment', {
   timestamps: true
 });
 
-Assignment.belongsTo(Course, { foreignKey: 'course_id' });
+Assignment.belongsTo(Course, { foreignKey: 'course_id', onDelete: 'CASCADE' });
 
 module.exports = Assignment;
