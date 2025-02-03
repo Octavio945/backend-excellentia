@@ -27,6 +27,21 @@ exports.getUserById = async (req, res) => {
   }
 };
 
+// Obtenir un utilisateur par son role
+exports.getUsersByRole = async (req, res) => {
+  try {
+      const role = req.query.role;
+      if (!role) {
+          return res.status(400).json({ message: "Le rôle est requis !" });
+      }
+
+      const users = await User.findAll({ where: { role: role } });
+      res.json(users);
+  } catch (error) {
+      res.status(500).json({ message: "Erreur serveur", error });
+  }
+};
+
 // Créer un utilisateur
 exports.createUser = async (req, res) => {
   try {
