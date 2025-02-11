@@ -4,8 +4,6 @@ const Filiere = require('./Filiere');
 const Course = require('./Course');
 const Resource = require('./Resource');
 const Assignment = require('./Assignment');
-const Interrogation = require('./Interrogation');
-const DevoirFinal = require('./DevoirFinal');
 const Grade = require('./Grade');
 const Payment = require('./Payment');
 const Schedule = require('./Schedule');
@@ -21,8 +19,6 @@ module.exports = {
     Course,
     Resource,
     Assignment,
-    Interrogation,
-    DevoirFinal,
     Grade,
     Payment,
     Schedule,

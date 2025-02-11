@@ -1,10 +1,13 @@
-const { Course, Filiere } = require('../models');
+const { Course, User, AcademicYear } = require('../models');
 
-// Obtenir tous les cours avec leur filière associée
+// Obtenir tous les cours avec leurs relations associées
 exports.getAllCourses = async (req, res) => {
   try {
     const courses = await Course.findAll({
-      include: [{ model: Filiere, as: 'filiere' }] // Inclure la filière associée
+      include: [
+        { model: User, attributes: ['username'] }, // Inclure le nom d'utilisateur du professeur
+        { model: AcademicYear } // Inclure l'année académique
+      ]
     });
     res.status(200).json(courses);
   } catch (error) {
@@ -13,13 +16,17 @@ exports.getAllCourses = async (req, res) => {
   }
 };
 
-// Obtenir un cours par ID avec sa filière associée
+// Obtenir un cours par ID avec ses relations associées
 exports.getCourseById = async (req, res) => {
   try {
     const { id } = req.params;
     const course = await Course.findByPk(id, {
-      include: [{ model: Filiere, as: 'filiere' }]
+      include: [
+        { model: User, attributes: ['username'] },
+        { model: AcademicYear }
+      ]
     });
+
     if (!course) {
       return res.status(404).json({ message: 'Cours non trouvé' });
     }
@@ -33,20 +40,14 @@ exports.getCourseById = async (req, res) => {
 // Créer un cours
 exports.createCourse = async (req, res) => {
   try {
-    const { title, description, teacher_id, academic_year_id, filiere_id } = req.body;
+    const { title, description, teacher_id, academic_year_id } = req.body;
 
-    if (!title || !description || !teacher_id || !academic_year_id || !filiere_id) {
+    if (!title || !description || !teacher_id || !academic_year_id) {
       return res.status(400).json({ message: 'Tous les champs sont requis' });
     }
 
-    // Vérifier si la filière existe
-    const filiere = await Filiere.findByPk(filiere_id);
-    if (!filiere) {
-      return res.status(400).json({ message: 'Filière non trouvée' });
-    }
-
     // Création du cours
-    const newCourse = await Course.create({ title, description, teacher_id, academic_year_id, filiere_id });
+    const newCourse = await Course.create({ title, description, teacher_id, academic_year_id });
 
     res.status(201).json(newCourse);
   } catch (error) {
@@ -59,21 +60,15 @@ exports.createCourse = async (req, res) => {
 exports.updateCourse = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, description, teacher_id, academic_year_id, filiere_id } = req.body;
+    const { title, description, teacher_id, academic_year_id } = req.body;
 
     const course = await Course.findByPk(id);
     if (!course) {
       return res.status(404).json({ message: 'Cours non trouvé' });
     }
 
-    // Vérifier si la filière existe
-    const filiere = await Filiere.findByPk(filiere_id);
-    if (!filiere) {
-      return res.status(400).json({ message: 'Filière non trouvée' });
-    }
-
     // Mise à jour du cours
-    await course.update({ title, description, teacher_id, academic_year_id, filiere_id });
+    await course.update({ title, description, teacher_id, academic_year_id });
 
     res.status(200).json(course);
   } catch (error) {

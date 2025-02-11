@@ -1,12 +1,18 @@
-const { Filiere } = require('../models');
+const { Filiere, Course } = require('../models');
 
-// Obtenir toutes les filières
 exports.getAllFilieres = async (req, res) => {
   try {
-    const filieres = await Filiere.findAll();
+    const filieres = await Filiere.findAll({
+      include: {
+        model: Course,
+        through: { attributes: [] }, // Ne pas afficher la table pivot
+        attributes: ['id', 'title']
+      }
+    });
+
     res.status(200).json(filieres);
   } catch (error) {
-    console.error('Error fetching filieres:', error);
+    console.error('Erreur lors de la récupération des filières:', error);
     res.status(500).json({ error: error.message });
   }
 };

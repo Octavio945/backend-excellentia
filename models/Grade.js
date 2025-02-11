@@ -5,11 +5,8 @@ const Course = require('./Course');
 
 const Grade = sequelize.define('Grade', {
   grade_type: {
-    type: DataTypes.STRING,
+    type: DataTypes.ENUM('interrogation1', 'interrogation2', 'devoir_terminal'),
     allowNull: false,
-    validate: {
-      isIn: [['devoir', 'interrogation', 'examen']],
-    },
   },
   grade: {
     type: DataTypes.FLOAT,
@@ -18,10 +15,6 @@ const Grade = sequelize.define('Grade', {
       min: 0,
       max: 20,
     },
-  },
-  category: {
-    type: DataTypes.ENUM('devoir', 'interrogation', 'examen'),
-    allowNull: false,
   },
   weight: {
     type: DataTypes.FLOAT,
@@ -34,7 +27,9 @@ const Grade = sequelize.define('Grade', {
   timestamps: true,
 });
 
+// Une note appartient à un étudiant
 Grade.belongsTo(User, { foreignKey: 'student_id', onDelete: 'CASCADE' });
+// Une note appartient à un cours
 Grade.belongsTo(Course, { foreignKey: 'course_id', onDelete: 'CASCADE' });
 
 module.exports = Grade;

@@ -26,38 +26,6 @@ exports.getQuestionById = async (req, res) => {
   }
 };
 
-// Créer une question
-exports.createQuestion = async (req, res) => {
-  try {
-    const { visitor_name, visitor_email, question } = req.body;
-    if (!visitor_name || !visitor_email || !question) {
-      return res.status(400).json({ message: 'Tous les champs sont requis' });
-    }
-    const newQuestion = await Question.create({ visitor_name, visitor_email, question });
-    res.status(201).json(newQuestion);
-  } catch (error) {
-    console.error('Error creating question:', error);
-    res.status(500).json({ error: error.message });
-  }
-};
-
-// Mettre à jour une question
-exports.updateQuestion = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { visitor_name, visitor_email, question } = req.body;
-    const questionRecord = await Question.findByPk(id);
-    if (!questionRecord) {
-      return res.status(404).json({ message: 'Question non trouvée' });
-    }
-    await questionRecord.update({ visitor_name, visitor_email, question });
-    res.status(200).json(questionRecord);
-  } catch (error) {
-    console.error('Error updating question:', error);
-    res.status(500).json({ error: error.message });
-  }
-};
-
 // Supprimer une question
 exports.deleteQuestion = async (req, res) => {
   try {
