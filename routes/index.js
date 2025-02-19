@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
 
+//routes pour mes middlewares 
+const authMiddleware = require('../middlewares/authMiddleware');
+
 // Import des contrôleurs
 const authController = require('../controllers/authController');
 const userController = require('../controllers/userController');
@@ -19,10 +22,12 @@ const filiereCourseController = require('../controllers/filiereCourseController'
 
 // 📌 **Routes pour l'authentification**
 router.post('/register', authController.register);
+router.post('/login', authController.login);
 
 // 📌 **Routes pour les utilisateurs**
 router.get('/users', userController.getAllUsers);
-router.get('/users/role/:role', userController.getUsersByRole);
+router.get('/users-by-role', userController.getUsersByRole);
+router.get('/user-profile', authMiddleware, userController.getUserProfile);
 router.get('/users/:id', userController.getUserById);
 router.post('/users', userController.createUser);
 router.put('/users/:id', userController.updateUser);
@@ -38,6 +43,7 @@ router.delete('/academicYears/:id', academicYearController.deleteAcademicYear);
 // 📌 **Routes pour les filières**
 router.get('/filieres', filiereController.getAllFilieres);
 router.get('/filieres/:id', filiereController.getFiliereById);
+router.get('/filieres/:filiere_id/students', filiereController.getStudentsByFiliere);
 router.post('/filieres', filiereController.createFiliere);
 router.put('/filieres/:id', filiereController.updateFiliere);
 router.delete('/filieres/:id', filiereController.deleteFiliere);
@@ -64,6 +70,7 @@ router.delete('/resources/:id', resourceController.deleteResource);
 // 📌 **Routes pour les notes**
 router.get('/grades', gradeController.getAllGrades);
 router.get('/grades/:id', gradeController.getGradeById);
+router.get('/grades/:student_id/:course_id', gradeController.getGradesByStudent);
 router.post('/grades', gradeController.createGrade);
 router.put('/grades/:id', gradeController.updateGrade);
 router.delete('/grades/:id', gradeController.deleteGrade);

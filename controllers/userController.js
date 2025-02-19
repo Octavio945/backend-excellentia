@@ -37,16 +37,33 @@ exports.getUsersByRole = async (req, res) => {
   try {
     const { role } = req.query;  // Récupérer le rôle depuis la query string
 
-    console.log(role);
-    if (!role ||role!="admin" ||role!="teacher" ||role!="student") {
-      return res.status(400).json({ message: "Le rôle est requis !" });
+    if (!role || !["admin", "teacher", "student"].includes(role)) {
+      return res.status(400).json({ message: "Le rôle est requis et doit être valide !" });
     }
 
     // Recherche des utilisateurs en fonction du rôle
-    const users = await User.findAll({ where: role = { role } });
+    const users = await User.findAll({ where: { role } });
+
     res.status(200).json(users);
   } catch (error) {
     res.status(500).json({ message: "Erreur serveur", error });
+  }
+};
+
+//Obtenir les informations de l'utimlisateur connecté 
+exports.getUserProfile = async (req, res) => {
+  try {
+    const user = await User.findByPk(req.user.id, {
+      attributes: ['id', 'username', 'email', 'role', 'profile_picture'],
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: 'Utilisateur non trouvé' });
+    }
+
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({ message: 'Erreur serveur' });
   }
 };
 

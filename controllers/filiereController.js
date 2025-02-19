@@ -1,4 +1,4 @@
-const { Filiere, Course } = require('../models');
+const { Filiere, Course, User } = require('../models');
 
 exports.getAllFilieres = async (req, res) => {
   try {
@@ -77,5 +77,29 @@ exports.deleteFiliere = async (req, res) => {
   } catch (error) {
     console.error('Error deleting filiere:', error);
     res.status(500).json({ error: error.message });
+  }
+};
+
+//pour selectionner tout les etudiant d'une filiere 
+exports.getStudentsByFiliere = async (req, res) => {
+  try {
+    const { filiere_id } = req.params;
+
+    // Vérifier si la filière existe
+    const filiere = await Filiere.findByPk(filiere_id);
+    if (!filiere) {
+      return res.status(404).json({ message: 'Filière non trouvée' });
+    }
+
+    // Récupérer tous les étudiants de cette filière
+    const students = await User.findAll({
+      where: { filiereId: filiere_id, role: 'student' },
+      attributes: ['id', 'username', 'email']
+    });
+
+    res.status(200).json(students);
+  } catch (error) {
+    console.error('Erreur lors de la récupération des étudiants:', error);
+    res.status(500).json({ error: "Erreur serveur lors de la récupération des étudiants." });
   }
 };

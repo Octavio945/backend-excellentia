@@ -1,4 +1,4 @@
-const { Grade } = require('../models');
+const { Grade, User, Course } = require('../models');
 
 // Définir les types de notes autorisés
 const VALID_GRADE_TYPES = ['interrogation1', 'interrogation2', 'devoir_terminal'];
@@ -33,18 +33,47 @@ exports.getGradeById = async (req, res) => {
   }
 };
 
+// Obtenir les notes d'un etudiants d'un cours 
+exports.getGradesByStudent = async (req, res) => {
+  try {
+    const { student_id, course_id } = req.params;
+
+    // Vérifier que l'étudiant existe
+    const student = await User.findByPk(student_id);
+    if (!student) {
+      return res.status(404).json({ message: 'Étudiant non trouvé' });
+    }
+
+    // Vérifier que le cours existe
+    const course = await Course.findByPk(course_id);
+    if (!course) {
+      return res.status(404).json({ message: 'Cours non trouvé' });
+    }
+
+    // Récupérer toutes les notes de l'étudiant pour ce cours
+    const grades = await Grade.findAll({
+      where: { student_id, course_id },
+      attributes: ['grade_type', 'grade']
+    });
+
+    res.status(200).json(grades);
+  } catch (error) {
+    console.error('Erreur lors de la récupération des notes:', error);
+    res.status(500).json({ error: "Erreur serveur lors de la récupération des notes." });
+  }
+};
+
 // 📌 **Créer une nouvelle note**
 exports.createGrade = async (req, res) => {
   try {
     const { student_id, course_id, grade_type, grade } = req.body;
-
     // Vérifier si tous les champs sont présents
     if (!student_id || !course_id || !grade_type || grade === undefined) {
       return res.status(400).json({ message: 'Tous les champs sont requis' });
     }
 
-    // Vérifier si le type de note est valide
-    if (!VALID_GRADE_TYPES.includes(grade_type)) {
+    // Vérifier que le type de note est valide
+    if (!['interrogation1', 'interrogation2', 'devoir_terminal'].includes(grade_type)) {
       return res.status(400).json({ message: 'Type de note invalide' });
     }
 
@@ -54,15 +83,19 @@ exports.createGrade = async (req, res) => {
     });
 
     if (existingGrade) {
-      return res.status(400).json({ message: `L'étudiant a déjà une note pour ${grade_type} dans ce cours` });
+      // Mise à jour de la note existante
+      await existingGrade.update({ grade });
+      return res.status(200).json({ message: 'Note mise à jour avec succès', grade: existingGrade });
+    } else {
+      // Création d’une nouvelle note
+      const newGrade = await Grade.create({ student_id, course_id, grade_type, grade });
+      return res.status(201).json({ message: 'Note ajoutée avec succès', grade: newGrade });
+
     }
 
-    // Créer la note
-    const newGrade = await Grade.create({ student_id, course_id, grade_type, grade });
-
-    res.status(201).json({ message: 'Note ajoutée avec succès', grade: newGrade });
   } catch (error) {
-    handleError(res, error, 'Erreur lors de la création de la note');
+    console.error('Erreur lors de l\'ajout de la note:', error);
+    res.status(500).json({ error: 'Erreur serveur' });
   }
 };
 
