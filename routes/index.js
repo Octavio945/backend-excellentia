@@ -23,6 +23,9 @@ const filiereCourseController = require('../controllers/filiereCourseController'
 // 📌 **Routes pour l'authentification**
 router.post('/register', authController.register);
 router.post('/login', authController.login);
+// router.post('/refresh-token', authController.refreshToken);
+router.get("/users/courses", authMiddleware, userController.getCoursesForStudent);
+router.get('/student/grades', authMiddleware, gradeController.getGradesForStudent);
 
 // 📌 **Routes pour les utilisateurs**
 router.get('/users', userController.getAllUsers);

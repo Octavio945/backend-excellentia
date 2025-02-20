@@ -5,21 +5,37 @@ const { User } = require('../models');
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
+
+    // Recherche de l'utilisateur par email
     const user = await User.findOne({ where: { email } });
 
+    // Vérification si l'utilisateur existe
     if (!user) {
       return res.status(404).json({ message: 'Utilisateur non trouvé' });
     }
 
+    // Vérification du mot de passe
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(400).json({ message: 'Mot de passe incorrect' });
     }
 
-    const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    // Génération du token JWT avec les informations nécessaires
+    const token = jwt.sign(
+      {
+        id: user.id,
+        role: user.role,
+        email: user.email,
+        filiereId: user.filiereId // Incluez d'autres champs nécessaires
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: '1h' }
+    );
 
-    res.status(200).json({ token, role: user.role, user });
+    // Réponse avec le token et toutes les informations de l'utilisateur
+    res.status(200).json({ token, user });
   } catch (error) {
+    // Gestion des erreurs serveur
     res.status(500).json({ message: 'Erreur serveur' });
   }
 };

@@ -40,6 +40,33 @@ exports.getFiliereCourseById = async (req, res) => {
   }
 };
 
+// // Récupérer les cours de l'étudiant connecté
+// exports.getCoursesForStudent = async (req, res) => {
+//   try {
+//     const studentId = req.user.id; // Supposons que l'ID de l'étudiant est stocké dans req.user après authentification
+
+//     // Vérifier si l'étudiant existe et récupérer sa filière
+//     const student = await Student.findByPk(studentId);
+//     if (!student) {
+//       return res.status(404).json({ message: "Étudiant non trouvé" });
+//     }
+
+//     // Récupérer les cours liés à sa filière via FiliereCourse
+//     const courses = await Course.findAll({
+//       include: {
+//         model: FiliereCourse,
+//         where: { FiliereId: student.filiere_id }, // On filtre par la filière de l'étudiant
+//         attributes: [] // On ne veut pas afficher les données de la table intermédiaire
+//       }
+//     });
+
+//     res.status(200).json(courses);
+//   } catch (error) {
+//     console.error("Erreur lors de la récupération des cours de l'étudiant :", error);
+//     res.status(500).json({ error: "Une erreur est survenue lors de la récupération des cours." });
+//   }
+// };
+
 // Associer un cours à une filière
 exports.createFiliereCourse = async (req, res) => {
   try {

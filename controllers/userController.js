@@ -1,4 +1,4 @@
-const { User, Filiere } = require('../models');
+const { User, Filiere, FiliereCourse, Course } = require('../models');
 const bcrypt = require('bcrypt');
 const { Op } = require('sequelize');
 
@@ -50,12 +50,13 @@ exports.getUsersByRole = async (req, res) => {
   }
 };
 
-//Obtenir les informations de l'utimlisateur connecté 
+//Obtenir les informations de l'utilisateur connecté 
 exports.getUserProfile = async (req, res) => {
   try {
     const user = await User.findByPk(req.user.id, {
       attributes: ['id', 'username', 'email', 'role', 'profile_picture'],
     });
+    // console.log(user)
 
     if (!user) {
       return res.status(404).json({ message: 'Utilisateur non trouvé' });
@@ -64,6 +65,33 @@ exports.getUserProfile = async (req, res) => {
     res.status(200).json(user);
   } catch (error) {
     res.status(500).json({ message: 'Erreur serveur' });
+  }
+};
+
+//Obtenir les cours des etudiant connecté 
+exports.getCoursesForStudent = async (req, res) => {
+  try {
+    const user = req.user;
+    // console.log("Connected User:", user); // Log de l'utilisateur connecté
+
+    if (!user.filiereId) {
+      return res.status(400).json({ error: 'Aucune filière assignée à cet étudiant.' });
+    }
+
+    const courses = await FiliereCourse.findAll({
+      where: { FiliereId: user.filiereId },
+      include: [
+        {
+          model: Course,
+          as: 'course',
+        },
+      ],
+    });
+
+    res.status(200).json(courses);
+  } catch (error) {
+    console.error('Erreur lors de la récupération des cours:', error);
+    res.status(500).json({ error: 'Une erreur est survenue lors de la récupération des cours.' });
   }
 };
 

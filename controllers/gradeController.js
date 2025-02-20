@@ -1,4 +1,4 @@
-const { Grade, User, Course } = require('../models');
+const { User, Filiere, Course, Grade, FiliereCourse } = require('../models');
 
 // Définir les types de notes autorisés
 const VALID_GRADE_TYPES = ['interrogation1', 'interrogation2', 'devoir_terminal'];
@@ -62,6 +62,64 @@ exports.getGradesByStudent = async (req, res) => {
     res.status(500).json({ error: "Erreur serveur lors de la récupération des notes." });
   }
 };
+
+// Méthode pour obtenir les notes d'un étudiant connecté
+exports.getGradesForStudent = async (req, res) => {
+  try {
+    const userId = req.user.id; // ID de l'étudiant connecté
+
+    // Récupérer la filière de l'étudiant
+    const user = await User.findByPk(userId, {
+      include: {
+        model: Filiere,
+        attributes: ['id', 'name'],
+      },
+    });
+
+    
+    if (!user) {
+      return res.status(404).json({ message: "Utilisateur non trouvé" });
+    }
+
+    const filiereId = user.Filiere.id;
+    // console.log(filiereId);
+
+    // Récupérer les cours associés à la filière
+    const courses = await FiliereCourse.findAll({
+      where: { FiliereId: filiereId },
+      include: {
+        model: Course,
+        as: 'course',
+        attributes: ['id', 'title'],
+      },
+    });
+    // console.log(courses);
+
+    if (courses.length === 0) {
+      console.log('Aucun cours trouvé pour cette filière.');
+    }
+
+    // Récupérer les notes pour chaque cours
+    const gradesPromises = courses.map(async (fc) => {
+  
+      const courseId = fc.course.id;
+      const grades = await Grade.findAll({
+        where: { student_id: userId, course_id: courseId },
+      });
+      return {
+        course: fc.course.title,
+        grades,
+      };
+    });
+
+    const gradesData = await Promise.all(gradesPromises);
+
+    res.status(200).json(gradesData);
+  } catch (error) {
+    res.status(500).json({ message: "Erreur serveur", error: error.message });
+  }
+};
+
 
 // 📌 **Créer une nouvelle note**
 exports.createGrade = async (req, res) => {
