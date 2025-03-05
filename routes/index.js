@@ -56,6 +56,7 @@ router.get('/filieres/:filiere_id/courses', filiereCourseController.getCoursesBy
 // 📌 **Routes pour les cours**
 router.get('/courses', courseController.getAllCourses);
 router.get('/courses/:id', courseController.getCourseById);
+router.get('/professors/courses', authMiddleware, courseController.getCoursesByTeacher);
 router.post('/courses', courseController.createCourse);
 router.put('/courses/:id', courseController.updateCourse);
 router.delete('/courses/:id', courseController.deleteCourse);
@@ -88,6 +89,10 @@ router.delete('/payments/:id', paymentController.deletePayment);
 // 📌 **Routes pour les emplois du temps**
 router.get('/schedules', scheduleController.getAllSchedules);
 router.get('/schedules/:id', scheduleController.getScheduleById);
+router.get('/filieres/:filiere_id/emploi-du-temps', scheduleController.getScheduleByFiliere);
+router.get('/schedules/professor', authMiddleware, scheduleController.getScheduleForConnectedProfessor);
+router.get('/schedules/student', authMiddleware, scheduleController.getScheduleForConnectedStudent);
+// router.get('/test-route', authMiddleware, scheduleController.testRoute);
 router.post('/schedules', scheduleController.createSchedule);
 router.put('/schedules/:id', scheduleController.updateSchedule);
 router.delete('/schedules/:id', scheduleController.deleteSchedule);
@@ -114,6 +119,7 @@ router.delete('/professeurCourses/:id', professeurCourseController.deleteProfess
 router.get('/filiereCourses', filiereCourseController.getAllFiliereCourses);
 router.get('/filiereCourses/:id', filiereCourseController.getFiliereCourseById);
 router.get('/filiereCourses/filiere/:filiere_id', filiereCourseController.getCoursesByFiliere);
+router.get('/courses/:course_id/filieres', filiereCourseController.getFilieresByCourse);
 router.post('/filiereCourses', filiereCourseController.createFiliereCourse);
 router.put('/filiereCourses/:id', filiereCourseController.updateFiliereCourse);
 router.delete('/filiereCourses/:id', filiereCourseController.deleteFiliereCourse);

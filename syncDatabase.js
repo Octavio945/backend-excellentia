@@ -13,7 +13,7 @@ const models = require('./models'); // Importer tous les modèles
 //   }
 // })();
 
-sequelize.sync({force: true})
+sequelize.sync({alter: true})
     .then(() => {
         console.log('Base de Données Synchronisée');
     })

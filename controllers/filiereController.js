@@ -1,4 +1,4 @@
-const { Filiere, Course, User } = require('../models');
+const { Filiere, Course, User, FiliereCourse } = require('../models');
 
 exports.getAllFilieres = async (req, res) => {
   try {
@@ -84,6 +84,7 @@ exports.deleteFiliere = async (req, res) => {
 exports.getStudentsByFiliere = async (req, res) => {
   try {
     const { filiere_id } = req.params;
+    // console.log(filiere_id);
 
     // Vérifier si la filière existe
     const filiere = await Filiere.findByPk(filiere_id);

@@ -98,21 +98,40 @@ exports.getCoursesForStudent = async (req, res) => {
 // Créer un utilisateur
 exports.createUser = async (req, res) => {
   try {
-    const { username, password, email, role, date_naissance, lieu_naissance, nationalite, sexe, adresse, numero_telephone, diplome, etablissement_obtention, annee_diplome, filiereId, date_debut, nom_prenom_urgence, telephone_urgence } = req.body;
+    const { 
+      username, password, email, role, date_naissance, lieu_naissance, nationalite, sexe, 
+      adresse, numero_telephone, diplome, etablissement_obtention, annee_diplome, filiereId, 
+      date_debut, nom_prenom_urgence, telephone_urgence 
+    } = req.body;
+
+    const users = await User.findAll();
+
+    let userRole = role || 'student'; // Rôle par défaut : student
+
+    // Si aucun utilisateur n'existe encore, le premier devient administrateur
+    if (users.length === 0) {
+      userRole = 'admin';
+    }
 
     // Vérification des champs obligatoires
-    if (!username || !password || !email || !role) {
+    if (!username || !password || !email) {
       return res.status(400).json({ message: 'Tous les champs obligatoires doivent être remplis' });
     }
 
     // Vérifier si l'email existe déjà dans la base de données
-    const existingUser = await User.findOne({ where: { email: email } });
+    const existingUser = await User.findOne({ where: { email } });
     if (existingUser) {
       return res.status(400).json({ message: 'L\'email est déjà utilisé' });
     }
 
+    // Vérifier si le numéro de téléphone existe déjà
+    const existingPhone = await User.findOne({ where: { numero_telephone } });
+    if (existingPhone) {
+      return res.status(400).json({ message: 'Le numéro de téléphone est déjà utilisé' });
+    }
+
     // Vérifier si l'utilisateur est un étudiant et que la filière est présente
-    if (role === 'student' && !filiereId) {
+    if (userRole === 'student' && !filiereId) {
       return res.status(400).json({ message: 'La filière est obligatoire pour les étudiants' });
     }
 
@@ -124,7 +143,7 @@ exports.createUser = async (req, res) => {
       username,
       password: hashedPassword,
       email,
-      role,
+      role: userRole,
       date_naissance,
       lieu_naissance,
       nationalite,
@@ -134,13 +153,11 @@ exports.createUser = async (req, res) => {
       diplome,
       etablissement_obtention,
       annee_diplome,
-      filiereId: role === 'student' ? filiereId : null,  // Associer la filière seulement pour les étudiants
+      filiereId: userRole === 'student' ? filiereId : null,
       date_debut,
       nom_prenom_urgence,
       telephone_urgence
     });
-
-    console.log("Données envoyées :", newUser);
 
     res.status(201).json(newUser);
   } catch (error) {
@@ -148,6 +165,7 @@ exports.createUser = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
 
 // Mettre à jour un utilisateur
 exports.updateUser = async (req, res) => {

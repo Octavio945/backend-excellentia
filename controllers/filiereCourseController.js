@@ -167,3 +167,26 @@ exports.deleteFiliereCourse = async (req, res) => {
     res.status(500).json({ error: 'Une erreur est survenue lors de la suppression de l\'association filière-cours.' });
   }
 };
+
+// Récupérer les filières associées à un cours
+exports.getFilieresByCourse = async (req, res) => {
+  try {
+    const { course_id } = req.params;
+
+    // Récupérer les filières associées à ce cours
+    const filieres = await FiliereCourse.findAll({
+      where: { CourseId: course_id },
+      include: [
+        { model: Filiere,
+          as: 'filiere',
+          attributes: ['id', 'name'] 
+        },
+      ]
+    });
+
+    res.status(200).json(filieres);
+  } catch (error) {
+    console.error('Erreur lors de la récupération des filières:', error);
+    res.status(500).json({ error: 'Une erreur est survenue lors de la récupération des filières.' });
+  }
+};

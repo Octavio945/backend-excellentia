@@ -37,6 +37,20 @@ exports.getCourseById = async (req, res) => {
   }
 };
 
+// les cours d'un professeur 
+exports.getCoursesByTeacher = async (req, res) => {
+  try {
+    const teacherId = req.user.id; // Assurez-vous que l'ID du professeur est disponible dans req.user
+    const courses = await Course.findAll({
+      where: { teacher_id: teacherId },
+    });
+    
+    res.json(courses);
+  } catch (error) {
+    res.status(500).json({ error: 'Erreur lors de la récupération des cours' });
+  }
+};
+
 // Créer un cours
 exports.createCourse = async (req, res) => {
   try {
