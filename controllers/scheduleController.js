@@ -122,22 +122,18 @@ exports.getScheduleForConnectedProfessor = async (req, res) => {
 
 // Récupérer les emplois du temps pour l'étudiant connecté
 exports.getScheduleForConnectedStudent = async (req, res) => {
-  console.log('Début du contrôleur - req.user:', req.user);
   try {
     const filiere_id = req.user.filiereId;
-    console.log('La filière  de l\'étudiant pour les emplois du temps:', filiere_id)
 
     // Récupérer l'emploi du temps pour la filière de l'étudiant
     const schedule = await Schedule.findAll({
       where: { filiere_id },
       include: [
         { model: Course },
-        { model: User, as: 'professor' }
+        { model: User}
       ],
       order: [['week_number', 'ASC'], ['day_of_week', 'ASC'], ['start_time', 'ASC']]
     });
-
-    console.log('Emplois du temps de l\'étudiant connecté:', schedule); // Log pour vérifier les emplois du temps récupérés
 
     res.status(200).json(schedule);
   } catch (error) {
@@ -145,48 +141,44 @@ exports.getScheduleForConnectedStudent = async (req, res) => {
     res.status(500).json({ error: 'Erreur interne du serveur.' });
   }
 };
-
-// exports.testRoute = (req, res) => {
-//   console.log('Route de test atteinte');
-//   res.status(200).json({ message: 'Test réussi' });
-// };
 
 // Obtenir tous les emplois du temps
-exports.getAllSchedules = async (req, res) => {
-  try {
-    const schedules = await Schedule.findAll({
-      include: [
-        { model: Course, attributes: ['id', 'title'] },
-        { model: User, attributes: ['id', 'username'] }
-      ],
-      order: [['week_number', 'ASC'], ['day_of_week', 'ASC'], ['start_time', 'ASC']]
-    });
-    res.status(200).json(schedules);
-  } catch (error) {
-    console.error('Erreur lors de la récupération des emplois du temps:', error);
-    res.status(500).json({ error: 'Erreur interne du serveur.' });
-  }
-};
+// exports.getAllSchedules = async (req, res) => {
+//   try {
+//     const schedules = await Schedule.findAll({
+//       include: [
+//         { model: Course, attributes: ['id', 'title'] },
+//         { model: User, attributes: ['id', 'username'] }
+//       ],
+//       order: [['week_number', 'ASC'], ['day_of_week', 'ASC'], ['start_time', 'ASC']]
+//     });
+//     res.status(200).json(schedules);
+//   } catch (error) {
+//     console.error('Erreur lors de la récupération des emplois du temps:', error);
+//     res.status(500).json({ error: 'Erreur interne du serveur.' });
+//   }
+// };
 
 // Obtenir un emploi du temps par ID
-exports.getScheduleById = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const schedule = await Schedule.findByPk(id, {
-      include: [
-        { model: Course, attributes: ['id', 'title'] },
-        { model: User, attributes: ['id', 'username'] }
-      ]
-    });
-    if (!schedule) {
-      return res.status(404).json({ message: 'Emploi du temps non trouvé.' });
-    }
-    res.status(200).json(schedule);
-  } catch (error) {
-    console.error('Erreur lors de la récupération de l\'emploi du temps:', error);
-    res.status(500).json({ error: 'Erreur interne du serveur.' });
-  }
-};
+// exports.getScheduleById = async (req, res) => {
+//   try {
+//     const { id } = req.params;
+//     const schedule = await Schedule.findByPk(id, {
+//       include: [
+//         { model: Course, attributes: ['id', 'title'] },
+//         { model: User, attributes: ['id', 'username'] }
+//       ]
+//     });
+//     if (!schedule) {
+//       return res.status(404).json({ message: 'Emploi du temps non trouvé.' });
+//     }
+//     res.status(200).json(schedule);
+//   } catch (error) {
+//     console.error('Erreur lors de la récupération de l\'emploi du temps:', error);
+//     res.status(500).json({ error: 'Erreur interne du serveur.' });
+//   }
+// };
+
 
 // Mettre à jour un emploi du temps existant
 exports.updateSchedule = async (req, res) => {

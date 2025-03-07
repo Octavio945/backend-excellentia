@@ -3,6 +3,7 @@ const router = express.Router();
 
 //routes pour mes middlewares 
 const authMiddleware = require('../middlewares/authMiddleware');
+const authorize = require('../middlewares/authorizeMiddleware');
 
 // Import des contrôleurs
 const authController = require('../controllers/authController');
@@ -80,19 +81,18 @@ router.put('/grades/:id', gradeController.updateGrade);
 router.delete('/grades/:id', gradeController.deleteGrade);
 
 // 📌 **Routes pour les paiements**
-router.get('/payments', paymentController.getAllPayments);
-router.get('/payments/:id', paymentController.getPaymentById);
-router.post('/payments', paymentController.createPayment);
-router.put('/payments/:id', paymentController.updatePayment);
-router.delete('/payments/:id', paymentController.deletePayment);
+router.get('/payments', authMiddleware, authorize('admin', 'user'), paymentController.getAllPayments);
+router.get('/payments/:id', authMiddleware, authorize('admin', 'user'), paymentController.getPaymentById);
+router.post('/payments', authMiddleware, authorize('admin'), paymentController.createPayment);
+router.put('/payments/:id', authMiddleware, authorize('admin'), paymentController.updatePayment);
+router.delete('/payments/:id', authMiddleware, authorize('admin'), paymentController.deletePayment);
 
 // 📌 **Routes pour les emplois du temps**
-router.get('/schedules', scheduleController.getAllSchedules);
-router.get('/schedules/:id', scheduleController.getScheduleById);
+// router.get('/schedules', scheduleController.getAllSchedules);
+// router.get('/schedules/:id', scheduleController.getScheduleById);
 router.get('/filieres/:filiere_id/emploi-du-temps', scheduleController.getScheduleByFiliere);
 router.get('/schedules/professor', authMiddleware, scheduleController.getScheduleForConnectedProfessor);
 router.get('/schedules/student', authMiddleware, scheduleController.getScheduleForConnectedStudent);
-// router.get('/test-route', authMiddleware, scheduleController.testRoute);
 router.post('/schedules', scheduleController.createSchedule);
 router.put('/schedules/:id', scheduleController.updateSchedule);
 router.delete('/schedules/:id', scheduleController.deleteSchedule);

@@ -235,3 +235,14 @@ exports.deleteUser = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+// Obtenir le nombre total d'utilisateurs
+exports.getTotalUsers = async (req, res) => {
+  try {
+    const totalUsers = await User.count();
+    res.status(200).json({ totalUsers });
+  } catch (error) {
+    console.error('Error fetching total users:', error);
+    res.status(500).json({ error: error.message });
+  }
+};
