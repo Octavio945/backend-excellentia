@@ -32,7 +32,6 @@ exports.getPaymentById = async (req, res) => {
 exports.createPayment = async (req, res) => {
   try {
     const { student_id, amount, payment_date, payment_method, reference_code, status } = req.body;
-	console.log('les données reçus : ',student_id, amount, payment_date, payment_method, reference_code, status);
 
     if (!student_id || !amount || !payment_date || !payment_method || !status) {
       return res.status(400).json({ message: 'Tous les champs obligatoires doivent être remplis' });
@@ -54,7 +53,6 @@ exports.createPayment = async (req, res) => {
       reference_code,
       status
     });
-	console.log('nouveau données :',newPayment);
 
     res.status(201).json(newPayment);
   } catch (error) {
