@@ -82,10 +82,22 @@ module.exports = {
     });
 
     // Ajout des index pour optimiser les recherches
-    await queryInterface.addIndex('Schedules', ['week_number']);
-    await queryInterface.addIndex('Schedules', ['professor_id']);
-    await queryInterface.addIndex('Schedules', ['course_id']);
-    await queryInterface.addIndex('Schedules', ['filiere_id']); // Ajoutez un index pour filiere_id
+    await queryInterface.addIndex('Schedules', {
+      fields: ['week_number'],
+      name: 'schedules_week_number_idx'
+    });
+    await queryInterface.addIndex('Schedules', {
+      fields: ['professor_id'],
+      name: 'schedules_professor_id_idx'
+    });
+    await queryInterface.addIndex('Schedules', {
+      fields: ['course_id'],
+      name: 'schedules_course_id_idx'
+    });
+    await queryInterface.addIndex('Schedules', {
+      fields: ['filiere_id'],
+      name: 'schedules_filiere_id_idx'
+    });
   },
 
   async down(queryInterface, Sequelize) {
